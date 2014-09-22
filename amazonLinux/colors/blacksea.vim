@@ -1,4 +1,4 @@
-olor file
+"Vim color file
 " Maintainer: Gerald S. Williams
 " Last Change: 2007 Jun 13
 " This is a dark version/opposite of "seashell". The cterm version of this is
