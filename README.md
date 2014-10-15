@@ -18,13 +18,18 @@ vim_settings
 * html5.vim.git: https://github.com/othree/html5.vim.git
 * syntastic.git : https://github.com/scrooloose/syntastic.git 
 * vim-easymotion.git: https://github.com/Lokaltog/vim-easymotion.git
-  + <code><Leader><Leader>w | Beginning of word forward.</code>
-  + <code><Leader><Leader>b | Beginning of word backward.</code>
-  + <code><Leader><Leader>j | Line downward. </code>
-  + <code><Leader><Leader>k | Line upward. </code>
+  + <code>`<Leader><Leader>`w | Beginning of word forward.</code>
+  + <code>`<Leader><Leader>`b | Beginning of word backward.</code>
+  + <code>`<Leader><Leader>`j | Line downward. </code>
+  + <code>`<Leader><Leader>`k | Line upward. </code>
+  + <code> /word | Search for a word hit tab/S-tab to scroll. </code>
 * vim-javascript.git: https://github.com/pangloss/vim-javascript.git
 * vim-json.git: https://github.com/elzr/vim-json.git
 * vim-markdown.git: https://github.com/tpope/vim-markdown.git
 * vim-surround.git: https://github.com/tpope/vim-surround.git
 * nerdcommenter.git : https://github.com/scrooloose/nerdcommenter.git 
-* nerdtree.git : https://github.com/scrooloose/nerdtree.git 
+  + <code>`<Leader>`ca | toggle between /* */ and // </code>
+  + <code>`<leader>cA` | comment end of line(commentAppend) </code>
+* Nerdtree.git: https://github.com/scrooloose/nerdtree.git 
+* FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
+  +  
