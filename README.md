@@ -10,6 +10,10 @@ vim_settings
 
 ###Adding Plugins
 * git submodule add https://github.com/git_repository vim/bundle/git_repostoryname
+* to pull a new plugin when updating vim_settings:
+  + <code>$ git pull</code><br>
+  + <code>$ git submodule init</code><br>
+  + <code>$ git submodule update</code><br>
 
 ###Reference of plugins and commands
 ====================================
