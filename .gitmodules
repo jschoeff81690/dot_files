@@ -1,0 +1,30 @@
+[submodule "emmet"]
+      path = vim/bundles/emmet-vim
+      url = https://github.com/mattn/emmet-vim.git
+[submodule "html5"]
+      path = vim/bundles/html5.vim
+      url = https://github.com/othree/html5.vim.git
+[submodule "nercommenter"]
+      path = vim/bundles/nercommenter
+      url = https://github.com/scrooloose/nercommenter.vim.git
+[submodule "nerdtree"]
+      path = vim/bundles/nerdtree
+      url = https://github.com/scrooloose/nerdtree.vim.git
+[submodule "syntastic"]
+      path = vim/bundles/syntastic
+      url = https://github.com/scrooloose/syntastic.git
+[submodule "vim-easymotion"]
+      path = vim/bundles/vim-easymotion
+      url = https://github.com/Lokaltog/vim-easymotion.git
+[submodule "vim-javascript"]
+      path = vim/bundles/vim-javascript
+      url = https://github.com/pangloss/vim-javascript.git
+[submodule "vim-json"]
+      path = vim/bundles/vim-json
+      url = https://github.com/elzr/vim-json.git
+[submodule "vim-markdown"]
+      path = vim/bundles/vim-markdown
+      url = https://github.com/tpope/vim-markdown.git
+[submodule "vim-surround"]
+      path = vim/bundles/vim-surround
+      url = https://github.com/tpope/vim-surroundj.git
