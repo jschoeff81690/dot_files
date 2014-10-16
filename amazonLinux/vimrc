@@ -1,6 +1,6 @@
 
 set nocompatible "fixes arrow problems in remote shell
-
+set incsearch "always one line above and below cursor
 set hidden	"can change buffers without writing, stores changes
 set backspace=indent,eol,start	"makes backspace act like normal
 set ruler  
@@ -23,6 +23,9 @@ set noswapfile
 
 filetype plugin on
 syntax on
+execute pathogen#infect()
+colorscheme distinguished
+
 "with a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
  nnoremap ; :
@@ -36,18 +39,38 @@ nmap <leader>wq :wq!<cr>
 
 
 "Fast Buffers
-nnoremap <Leader>p :bp<CR>
-nnoremap <Leader>n :bn<CR>
-nnoremap <Leader>1 :1b<CR>
-nnoremap <Leader>2 :2b<CR>
-nnoremap <Leader>3 :3b<CR>
-nnoremap <Leader>4 :4b<CR>
-nnoremap <Leader>5 :5b<CR>
-nnoremap <Leader>6 :6b<CR>
-nnoremap <Leader>7 :7b<CR>
-nnoremap <Leader>8 :8b<CR>
-nnoremap <Leader>9 :9b<CR>
-nnoremap <Leader>0 :10b<CR>
+nnoremap <Leader>p :bp<cr>
+nnoremap <Leader>n :bn<cr>
+nnoremap <Leader>1 :1b<cr>
+nnoremap <Leader>2 :2b<cr>
+nnoremap <Leader>3 :3b<cr>
+nnoremap <Leader>4 :4b<cr>
+nnoremap <Leader>5 :5b<cr>
+nnoremap <Leader>6 :6b<cr>
+nnoremap <Leader>7 :7b<cr>
+nnoremap <Leader>8 :8b<cr>
+nnoremap <Leader>9 :9b<cr>
+nnoremap <Leader>0 :10b<cr>
+
+"Fast Search and replace
+nmap fr :%s/
 
 
-colorscheme distinguished
+"EASYMOTION MAPS
+" Gif config
+ map  / <Plug>(easymotion-sn)
+ omap / <Plug>(easymotion-tn)
+
+" " These `n` & `N` mappings are options. You do not have to map `n` & `N` to
+" EasyMotion.
+" " Without these mappings, `n` & `N` works fine. (These mappings just provide
+" " different highlight method and have some other features )
+ map  n <Plug>(easymotion-next)
+ map  N <Plug>(easymotion-prev)
+
+
+"CTRL-P FUZZY FINDER MAPS
+nmap ff <c-p>
+
+"NERDTREE
+nmap nt :NERDTreeToggle<cr>
