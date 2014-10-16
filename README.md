@@ -17,7 +17,7 @@ vim_settings
 
 ###Reference of plugins and commands
 ====================================
-* searcha nd replace fr
+* <code> (normal mode)fr  maps to :%s/ | search and replace</code>
 * emmet-vim.git: https://github.com/mattn/emmet-vim.git
   + REFERENCE: https://raw.githubusercontent.com/mattn/emmet-vim/master/TUTORIAL
 * html5.vim.git: https://github.com/othree/html5.vim.git
@@ -36,5 +36,6 @@ vim_settings
   + <code>`<Leader>`ca | toggle between /* */ and // </code>
   + <code>`<leader>cA` | comment end of line(commentAppend) </code>
 * Nerdtree.git: https://github.com/scrooloose/nerdtree.git 
+  + <code> (normal mode) nt  | NERDTreeToggle</code>
 * FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
   +  in normal mode ff maps to fuzzycoveragefile 
