@@ -7,7 +7,9 @@ vim_settings
 <code>$ git submodule update</code><br>
 * move corresponding vimrc to ~/.vimrc or /etc/vimrc
   + e.g., <code>$ cp OSX/vimrc ~/.vimrc</code>
-
+* move plugins from vim_settings/vim to ~/vim
+ + e.g., <code>$ cp -rf /vim ~/.vim/</code>
+ 
 ###Adding Plugins
 * git submodule add https://github.com/git_repository vim/bundle/git_repostoryname
 * to pull a new plugin when updating vim_settings:
