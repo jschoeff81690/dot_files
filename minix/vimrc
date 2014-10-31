@@ -21,6 +21,7 @@ set noswapfile
 filetype plugin on
 syntax on
 execute pathogen#infect()
+
 "with a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
 nnoremap ; :
@@ -43,4 +44,20 @@ nnoremap <Leader>7 :7b<CR>
 nnoremap <Leader>8 :8b<CR>
 nnoremap <Leader>9 :9b<CR>
 nnoremap <Leader>0 :10b<CR>
+ 
+"Fast Search and replace
+nmap fr :%s/
 
+"EASYMOTION MAPS
+map / <Plug>(easymotion-sn)
+omap / <Plug>(easymotion-tn)
+" " These `n` & `N` mappings are options. You do not have to map `n` & `N` to
+" EasyMotion.
+" " Without these mappings, `n` & `N` works fine. (These mappings just provide
+" " different highlight method and have some other features )
+map n <Plug>(easymotion-next)
+map N <Plug>(easymotion-prev)
+"CTRL-P FUZZY FINDER MAPS
+nmap ff <c-p>
+"NERDTREE
+nmap nt :NERDTreeToggle<cr>
