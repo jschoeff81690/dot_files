@@ -39,3 +39,9 @@ vim_settings
   + <code> (normal mode) nt  | NERDTreeToggle</code>
 * FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
   +  in normal mode ff maps to fuzzycoveragefile 
+
+
+For Minix 3
+==========================
+Before git remote commands(pull,push, etc) need to <code>export GIT_SSL_NO_VERIFY=true</code> to ignore the ssl certs.
+Then is the same.
