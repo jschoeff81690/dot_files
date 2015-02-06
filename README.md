@@ -42,6 +42,10 @@ vim_settings
 * FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
   +  in normal mode ff maps to fuzzycoveragefile 
 
+* Multiple Selects like Sublime : https://github.com/terryma/vim-multiple-cursors 
+  + <code>Ctrl+n</code> | Select multiple
+  + <code>Ctrl+p</code> | DeSelect last cursor
+
 
 For Minix 3
 ==========================
