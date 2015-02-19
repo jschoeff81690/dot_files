@@ -3,12 +3,13 @@ vim_settings
 
 ###Setup
 * install files<br> <code>$ git clone https://github.com/jschoeff81690/vim_settings</code><br>
+<code>$ cd vim_settings</code><br>
 <code>$ git submodule init</code><br>
 <code>$ git submodule update</code><br>
 * move corresponding vimrc to ~/.vimrc or /etc/vimrc
   + e.g., <code>$ cp OSX/vimrc ~/.vimrc</code>
 * move plugins from vim_settings/vim to ~/vim
- + e.g., <code>$ cp -rf /vim ~/.vim/</code>
+ + e.g., <code>$ cp -rf vim ~/.vim/</code>
  
 ###Adding Plugins
 * git submodule add https://github.com/git_repository vim/bundle/git_repostoryname
