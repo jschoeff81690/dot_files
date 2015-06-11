@@ -40,8 +40,8 @@ vim_settings
   + <code>`<leader>cA` | comment end of line(commentAppend) </code>
 * Nerdtree.git: https://github.com/scrooloose/nerdtree.git 
   + <code> (normal mode) nt  | NERDTreeToggle</code>
-* FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
-  +  in normal mode ff maps to fuzzycoveragefile 
+* CtrlP: https://github.com/kien/ctrlp.vim
+  +  in normal mode ff maps to ctrlp 
 * Multiple Selects like Sublime : https://github.com/terryma/vim-multiple-cursors 
   + <code>Ctrl+n</code> | Select multiple
   + <code>Ctrl+p</code> | DeSelect last cursor
