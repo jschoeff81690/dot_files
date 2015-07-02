@@ -56,7 +56,7 @@ vim_settings
   + Way better than superTab
   + __word__<tab> will complete a word
   + also has omni complete like "hdden" will still allow autocomplete to "hidden"
-For Minix 3
-==========================
-Before git remote commands(pull,push, etc) need to <code>export GIT_SSL_NO_VERIFY=true</code> to ignore the ssl certs.
-Then is the same.
+* cSyntakAfter: http://www.vim.org/scripts/script.php?script_id=3265
+  + highlights operators(+-/$...) for C-like languages
+* Solorized theme: git://github.com/altercation/vim-colors-solarized.git
+  + better theme..
