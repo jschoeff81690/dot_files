@@ -40,17 +40,23 @@ vim_settings
   + <code>`<leader>cA` | comment end of line(commentAppend) </code>
 * Nerdtree.git: https://github.com/scrooloose/nerdtree.git 
   + <code> (normal mode) nt  | NERDTreeToggle</code>
-* FuzzyFinder: https://github.com/vim-scripts/FuzzyFinder
-  +  in normal mode ff maps to fuzzycoveragefile 
+* CtrlP: https://github.com/kien/ctrlp.vim
+  +  in normal mode ff maps to ctrlp 
 * Multiple Selects like Sublime : https://github.com/terryma/vim-multiple-cursors 
   + <code>Ctrl+n</code> | Select multiple
   + <code>Ctrl+p</code> | DeSelect last cursor
 * SuperTab for local word autocomplete : git clone https://github.com/ervandew/supertab
   + __word_<code>tab</code> | finishes the word
   + e.g., var_<code>tab</code> | Drop down with var_dump
-
-
-For Minix 3
-==========================
-Before git remote commands(pull,push, etc) need to <code>export GIT_SSL_NO_VERIFY=true</code> to ignore the ssl certs.
-Then is the same.
+* Airline : https://github.com/bling/vim-airline
+  + Displays the information bar at bottom of buffer, adds color to mode and stuff
+* Tagbar : https://github.com/majutsushi/tagbar
+  + "tt" maps to :TagbarToggle<CR>
+* NeoComplete : https://github.com/Shougo/neocomplete.vim
+  + Way better than superTab
+  + __word__<tab> will complete a word
+  + also has omni complete like "hdden" will still allow autocomplete to "hidden"
+* cSyntakAfter: http://www.vim.org/scripts/script.php?script_id=3265
+  + highlights operators(+-/$...) for C-like languages
+* Solorized theme: git://github.com/altercation/vim-colors-solarized.git
+  + better theme..
