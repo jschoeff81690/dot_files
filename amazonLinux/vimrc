@@ -1,5 +1,5 @@
-
-set nocompatible "fixes arrow problems in remote shell
+"source /apollo/env/envImprovement/var/vimrc
+set mouse=a "enable mouse in vim
 set incsearch "always one line above and below cursor
 set hidden	"can change buffers without writing, stores changes
 set backspace=indent,eol,start	"makes backspace act like normal
@@ -10,21 +10,28 @@ set showmatch	"show matching parenthesis
 set autoindent
 set smartindent
 set wrap
-
+set expandtab
 set shiftwidth=4	"spaces to autoindent
 set tabstop=4	"tab = 4 spaces
-
-
+set smartcase   " for searching, if you use caps it will look for caps
+set ignorecase  " Whenn searching it will ignore caps, if you use caps then ^smart case will make it look for caps
 set history=1000 	"commands and search history
 set undolevels=1000	"number o fhistory for undo
 
+" These remove backups, annoying files but if vim crashes you lose changes..
 set nobackup
 set noswapfile
 
+"enable plugins and pathogen
 filetype plugin on
 syntax on
 execute pathogen#infect()
-colorscheme distinguished
+
+"theme
+set background=dark
+colorscheme solarized
+
+"colorscheme distinguished
 
 "with a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
@@ -37,20 +44,6 @@ nmap <leader>w :w!<cr>
 nmap <leader>q :q!<cr>
 nmap <leader>wq :wq!<cr>
 
-
-"Fast Buffers
-nnoremap <Leader>p :bp<cr>
-nnoremap <Leader>n :bn<cr>
-nnoremap <Leader>1 :1b<cr>
-nnoremap <Leader>2 :2b<cr>
-nnoremap <Leader>3 :3b<cr>
-nnoremap <Leader>4 :4b<cr>
-nnoremap <Leader>5 :5b<cr>
-nnoremap <Leader>6 :6b<cr>
-nnoremap <Leader>7 :7b<cr>
-nnoremap <Leader>8 :8b<cr>
-nnoremap <Leader>9 :9b<cr>
-nnoremap <Leader>0 :10b<cr>
 
 "Fast Search and replace
 nmap fr :%s/
@@ -74,3 +67,47 @@ nmap ff <c-p>
 
 "NERDTREE
 nmap nt :NERDTreeToggle<cr>
+
+"TagBar
+nmap tt :TagbarToggle<CR>
+
+"Fast Buffers
+nnoremap <Leader>p :bp<cr>
+nnoremap <Leader>n :bn<cr>
+
+"Neocomplete
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  "return neocomplete#close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplete#close_popup()
+inoremap <expr><C-e>  neocomplete#cancel_popup()
+
+
+autocmd! FileType c,cpp,java,php call CSyntaxAfter() 
