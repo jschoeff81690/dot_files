@@ -45,7 +45,7 @@ vim_settings
 * Multiple Selects like Sublime : https://github.com/terryma/vim-multiple-cursors 
   + <code>Ctrl+n</code> | Select multiple
   + <code>Ctrl+p</code> | DeSelect last cursor
-* SuperTab for local word autocomplete : git clone https://github.com/ervandew/supertab
+* ~~SuperTab for local word autocomplete : git clone https://github.com/ervandew/supertab~~
   + __word_<code>tab</code> | finishes the word
   + e.g., var_<code>tab</code> | Drop down with var_dump
 * Airline : https://github.com/bling/vim-airline
