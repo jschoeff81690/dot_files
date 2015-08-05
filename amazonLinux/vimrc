@@ -1,4 +1,3 @@
-"source /apollo/env/envImprovement/var/vimrc
 set mouse=a "enable mouse in vim
 set incsearch "always one line above and below cursor
 set hidden	"can change buffers without writing, stores changes
