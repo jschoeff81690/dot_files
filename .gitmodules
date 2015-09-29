@@ -1,0 +1,42 @@
+[submodule "vim/bundle/emmet-vim.git"]
+	path = vim/bundle/emmet-vim.git
+	url = https://github.com/mattn/emmet-vim.git
+[submodule "vim/bundle/syntastic.git"]
+	path = vim/bundle/syntastic.git
+	url = https://github.com/scrooloose/syntastic.git
+[submodule "vim/bundle/vim-easymotion.git"]
+	path = vim/bundle/vim-easymotion.git
+	url = https://github.com/Lokaltog/vim-easymotion.git
+[submodule "vim/bundle/vim-javascript.git"]
+	path = vim/bundle/vim-javascript.git
+	url = https://github.com/pangloss/vim-javascript.git
+[submodule "vim/bundle/vim-json.git"]
+	path = vim/bundle/vim-json.git
+	url = https://github.com/elzr/vim-json.git
+[submodule "vim/bundle/vim-markdown.git"]
+	path = vim/bundle/vim-markdown.git
+	url = https://github.com/tpope/vim-markdown.git
+[submodule "vim/bundle/vim-surround.git"]
+	path = vim/bundle/vim-surround.git
+	url = https://github.com/tpope/vim-surround.git
+[submodule "vim/bundle/nerdcommenter.git"]
+	path = vim/bundle/nerdcommenter.git
+	url = https://github.com/scrooloose/nerdcommenter.git
+[submodule "vim/bundle/nerdtree.git"]
+	path = vim/bundle/nerdtree.git
+	url = https://github.com/scrooloose/nerdtree.git
+[submodule "vim/bundle/ctrlp.vim"]
+	path = vim/bundle/ctrlp.vim
+	url = https://github.com/kien/ctrlp.vim
+[submodule "vim/bundle/vim-multiple-cursors"]
+	path = vim/bundle/vim-multiple-cursors
+	url = https://github.com/terryma/vim-multiple-cursors
+[submodule "vim/bundle/vim-airline"]
+	path = vim/bundle/vim-airline
+	url = https://github.com/bling/vim-airline
+[submodule "vim/bundle/tagbar"]
+	path = vim/bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
+[submodule "vim/bundle/neocomplete.vim"]
+	path = vim/bundle/neocomplete.vim
+	url = https://github.com/Shougo/neocomplete.vim
