@@ -1,0 +1,64 @@
+#!/bin/zsh
+
+# greps for path, filename and line number
+file-only () {
+  if [ -n "$1" ]; then
+    echo "Possible Usage: fxgc <pattern> | file-only "
+    echo "Results in: path/to/file/filename.java:12"
+    return 1
+  fi
+
+  grep -E -o '[a-zA-Z\.\/]+.java:[0-9]{0,2}'
+}
+
+jks-to-pem(){
+    if [ -z $1 ] || [ -z $2  ] ; then
+        echo "Usage: $0 <sourcefile.jks> <destinationfile.pem>"
+        return 1
+    fi
+    local jks_file=$1
+    local pem_file=$2
+    local p12_temp_file=${jks_file}.p12.tmp
+    /usr/bin/keytool -importkeystore -srckeystore $jks_file -destkeystore $p12_temp_file -srcstoretype jks -deststoretype pkcs12
+    /usr/bin/openssl pkcs12 -in $p12_temp_file -out $pem_file
+    rm -f $p12_temp_file
+}
+
+up() {
+    if [ -z "$1" ] ; then
+        echo "Usage: $0 <NumberOfDirectoriesUp>"
+        return 1
+    fi
+    dir="../"
+    if [ "$1" -gt 1 ] ; then
+        for i in ${1} ; do
+            dir=$dir"../"
+        done
+    fi
+    echo $dir
+    cd $dir
+}
+
+# Colorful man pages
+man() {
+    env LESS_TERMCAP_mb=$'\E[01;31m' \
+    LESS_TERMCAP_md=$'\E[01;38;5;74m' \
+    LESS_TERMCAP_me=$'\E[0m' \
+    LESS_TERMCAP_se=$'\E[0m' \
+    LESS_TERMCAP_so=$'\E[38;5;246m' \
+    LESS_TERMCAP_ue=$'\E[0m' \
+    LESS_TERMCAP_us=$'\E[04;38;5;146m' \
+    man "$@"
+}
+
+math() {
+    if [ -z "$1" ] ; then
+        echo "Usage: $0 \"1+2\""
+        echo "Usage: $0 \"1/2\""
+        echo "Usage: $0 \"1*2\""
+        echo "Usage: $0 \"1-2\""
+    fi
+    awk 'BEGIN{print '"$1"'}'
+}
+
+

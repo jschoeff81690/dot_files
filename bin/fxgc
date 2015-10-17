@@ -1,0 +1,64 @@
+#!/usr/bin/perl
+
+# Copyright (C) 2000 by Wayne Mesard
+# All rights reserved.
+
+# Recurse down a directory running grep(1) on all C and assembly files, skipping SCCS directories.
+
+if ($^O eq "linux") {
+    # If we have GNU find, use -print0, so that embedded spaces in filenames don't screw us up.
+    $findprint = "-print0";
+    $xargsnull = "--null";
+} else {
+    $findprint = "-print";
+    $xargsnull = "";
+}
+
+$default_suffix = "cpp c h java js xml";
+$default_dir    = ".";
+
+use Getopt::Std;
+getopts('d:o:s:x:Ein');
+
+$suffix      = ($opt_s || $default_suffix);
+$dirs        = ($opt_d || $default_dir);
+$exclude_dir = ($opt_x);
+
+# Build up as many "-name" params as we need.
+foreach (split / /, $suffix) {
+    $findsuffix .= " -o -name '*." . $_ . "' " . $findprint;
+}
+
+# TODO: support multiple exclude dirs, just like we do for $suffix.
+$excludelist = "-name $exclude_dir -prune";
+
+# Pass these options through to grep.
+$grep_opt .= " " . $opt_o;
+$grep_opt .= " -i" if ($opt_i);  # handle most common case specially.
+
+usage() if ($#ARGV == -1);
+
+foreach (@ARGV) {
+  $str .= " '$_'";
+}
+
+$cmd = "$echo find $dirs $excludelist " .
+       "$findsuffix | " .
+  "xargs $xargsnull grep -n $grep_opt -- $str /dev/null";
+
+if ($opt_n) {
+  print $cmd, "\n";
+} else {
+  exec $cmd;
+}
+
+sub usage {
+  die "Usage: fxgc [-d <directory>] [-s suffix-pattern] " .
+      "[-o <grep-options>] [-i] [-n] [-eE]\n\n" .
+    "<directory>: where to look. Default is \"" . $default_dir . "\".\n" .
+    "<suffix-pattern>: what files to examine. Default is \"" .
+      $default_suffix . "\".\n" .
+    "\"-i\" means case-insensitive. It's just a shortcut for \"-o-i\".\n\t\$ fxgc –i runtime.exec\n" .
+    "\"-n\" means just echo the command; don't really do it.\n" .
+    "\"-x\" means ignore the following dir.\n\t\$ fxgc -x tst/\n";
+}
