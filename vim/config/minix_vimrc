@@ -1,0 +1,40 @@
+colorscheme slate
+set mouse=
+set hidden	"can change buffers without writing, stores changes
+set backspace=indent,eol,start	"makes backspace act like normal
+set ruler  
+set tabstop=4	"tab = 4 spaces
+set showcmd
+set number		"show line numbers
+set showmatch	"show matching parenthesis
+set autoindent
+set copyindent		"copy previous indentation for auto indent
+set shiftwidth=4	"spaces to autoindent
+set smarttab		"inset tabs on beginning of line using shiftwidth
+
+set title 			"terminal title
+
+"with a map leader it's possible to do extra key combinations
+" like <leader>w saves the current file
+nnoremap ; :
+let mapleader = ","
+let g:mapleader = ","
+
+" Fast saving
+nmap <leader>w :w!<cr>
+nmap <leader>q :q!<cr>
+nmap <leader>wq :wq!<cr>
+
+"Fast Buffers
+nnoremap <Leader>p :bp<CR>
+nnoremap <Leader>n :bn<CR>
+nnoremap <Leader>1 :1b<CR>
+nnoremap <Leader>2 :2b<CR>
+nnoremap <Leader>3 :3b<CR>
+nnoremap <Leader>4 :4b<CR>
+nnoremap <Leader>5 :5b<CR>
+nnoremap <Leader>6 :6b<CR>
+nnoremap <Leader>7 :7b<CR>
+nnoremap <Leader>8 :8b<CR>
+nnoremap <Leader>9 :9b<CR>
+nnoremap <Leader>0 :10b<CR>
