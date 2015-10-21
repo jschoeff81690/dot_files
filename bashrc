@@ -11,4 +11,4 @@ alias ll='ls -alh'
 alias lr='ls -alrth'
 
 #use custom prompt
-source ~/scripts/.zshprompt
+source ~/bin/zsh_prompt
