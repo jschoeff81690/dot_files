@@ -57,4 +57,4 @@ alias glgm='git log --graph --max-count=10'
 alias glgp='git log --stat --color -p'
 alias glo='git log --oneline --decorate --color'
 #use custom prompt
-source ~/scripts/.zshprompt
+source ~/bin/.zshprompt
