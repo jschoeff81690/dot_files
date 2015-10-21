@@ -44,6 +44,17 @@ alias gst='git status'
 alias sl=ls
 alias ll='ls -alh'
 alias lr='ls -alrth'
-
+alias l='ls -lah'
+alias la='ls -lAh'
+alias ll='ls -lh'
+alias ls='ls -G'
+alias lsa='ls -lah'
+alias gl='git pull'
+alias glg='git log --stat --color'
+alias glgg='git log --graph --color'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias glgp='git log --stat --color -p'
+alias glo='git log --oneline --decorate --color'
 #use custom prompt
 source ~/scripts/.zshprompt
