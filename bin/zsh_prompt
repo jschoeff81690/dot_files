@@ -1,1 +1,2 @@
-PROMPT='%{$fg[magenta]%}%n%{$reset_color%} at %{$fg[yellow]%}%m%{$reset_color%} '
+PROMPT="%{$fg[red]%}<%{$reset_color%}%{$fg[blue]%}justin%{$fg_no_bold[yellow]%}%{$reset_color%}> "
+RPROMPT="%{$fg_no_bold[yellow]%}%~%{$reset_color%}"
