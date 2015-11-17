@@ -60,3 +60,10 @@ vim_settings
   + highlights operators(+-/$...) for C-like languages
 * Solorized theme: git://github.com/altercation/vim-colors-solarized.git
   + better theme..
+* ag (silver searcher) : https://github.com/ggreer/the_silver_searcher
+  + Hit K over characters and it will search nearby files.
+
+Shell Commands:
+=====================
+* fzf for shell : https://github.com/junegunn/fzf
+  + type ctrl+r in terminal and regex like searching
