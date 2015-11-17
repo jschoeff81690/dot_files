@@ -29,16 +29,27 @@ LISTMAX=0
 ## disable mail checking
 MAILCHECK=0
 
-# These should work with both zsh and bash
- 
-#various functions
-source $HOME/bin/functions  # Load my functions
+# Various Functions and Plugins
+[ -f $HOME/bin/functions ] source $HOME/bin/functions  # Load my functions
+
+# Better search history for zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 #Aliases 
-#
-#workspace stuff
+
+# Easier source and edit configs
+alias zsource='source ~/.zshrc'
+alias fsource='source ~/bin/functions'
+alias bsource='source ~/.bshrc'
+alias zedit='vim ~/.zshrc'
+alias bedit='vim ~/.bshrc'
+alias fedit='vim ~/bin/functions'
+alias tedit='vim ~/.tmux.conf'
+alias vedit='vim ~/.vimrc'
+
 # Git 
 alias gst='git status'
+alias gd='git diff'
 
 #ls stuff
 alias sl=ls
@@ -56,5 +67,12 @@ alias glgga='git log --graph --decorate --all'
 alias glgm='git log --graph --max-count=10'
 alias glgp='git log --stat --color -p'
 alias glo='git log --oneline --decorate --color'
+
+# Tmux Stuffs
+alias tls='tmux ls'
+
+# Better search history for zsh
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 #use custom prompt
 source ~/bin/zsh_prompt
