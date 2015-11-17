@@ -14,11 +14,21 @@ setopt COMPLETE_IN_WORD
 ## restart running processes on exit
 #setopt HUP
 
-# history
-setopt APPEND_HISTORY
-# for sharing history between zsh processes
-setopt INC_APPEND_HISTORY
+# Push dirs to stack with cd 
+setopt AUTO_PUSHD              # push directories on every cd
+setopt pushd_ignore_dups       # dont have a bunch of the same dirs on stack
+
+######################### history options ############################
+setopt EXTENDED_HISTORY        # store time in history
+setopt HIST_EXPIRE_DUPS_FIRST  # unique events are more usefull to me
+setopt HIST_VERIFY             # Make those history commands nice
+setopt INC_APPEND_HISTORY      # immediatly insert history into history file
 setopt SHARE_HISTORY
+HISTSIZE=16000                 # spots for duplicates/uniques
+SAVEHIST=15000                 # unique events guarenteed
+HISTFILE=~/.history
+setopt histignoredups          # ignore duplicates of the previous event
+
 
 ## never ever beep ever
 setopt NO_BEEP
