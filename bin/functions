@@ -51,7 +51,7 @@ man() {
     man "$@"
 }
 
-math() {
+function math() {
     if [ -z "$1" ] ; then
         echo "Usage: $0 \"1+2\""
         echo "Usage: $0 \"1/2\""
@@ -61,4 +61,15 @@ math() {
     awk 'BEGIN{print '"$1"'}'
 }
 
+function a(){
+    if [ -z "$1" ] ; then
+        echo "Usage: $0 <session_name>"
+        echo "Tmux attach: If session doesn't exist, create one."
+        return
+    fi
+    tmux attach -t $1
 
+    if [ -n $? ] ; then
+        tmux new -s $1
+    fi
+}
