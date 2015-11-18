@@ -78,3 +78,18 @@ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # Install tmux plugins
 ~/.tmux/plugins/tpm/scripts/install_plugins.sh
+
+# Lets see if we can brew?
+linux=$(uname -a | grep linux)
+
+if [ -n "$linux" ] ; then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+else
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"
+fi
+
+#install fzf
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
+
+brew install the_silver_searcher
