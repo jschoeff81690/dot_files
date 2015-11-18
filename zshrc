@@ -40,7 +40,7 @@ LISTMAX=0
 MAILCHECK=0
 
 # Various Functions and Plugins
-[ -f $HOME/bin/functions ] source $HOME/bin/functions  # Load my functions
+[ -f $HOME/bin/functions ] && source $HOME/bin/functions  # Load my functions
 
 # Better search history for zsh
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
