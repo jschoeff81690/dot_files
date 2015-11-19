@@ -73,3 +73,61 @@ function a(){
         tmux new -s $1
     fi
 }
+
+#####
+# A function designed to create/update alias "#" in .zshrc.
+#
+# This will either append or create the alias in zsh. so that user
+# can type 1 (or any #) to go to a frequently used dir.
+#####
+function cd_alias() {
+    if [ -z "$1" ]; then
+        echo "Usage: $0 path_to_set [number]"
+        echo 'Ex1:'
+        echo '$ type 1'
+        echo '> 1 is an alias for ...'
+        echo "$ $0 /home/$USER/work"
+        echo '$ type 1'
+        echo "> 1 is an alias for cd /home/$USER/work"
+        echo '-----------------'
+        echo 'Ex2:'
+        echo '$ type 1'
+        echo '> 1 is an alias for ...'
+        echo '$ type 2'
+        echo '> 2 not found'
+        echo "$ $0 /home/$USER/work 2"
+        echo '$ type 1'
+        echo '> 1 is an alias for ...'
+        echo '$ type 2'
+        echo "> 2 is an alias for cd /home/$USER/work"
+        return 1
+    fi
+
+    path_to_set=$1
+    current_num=1
+    zsh_has_alias=$(grep "alias ${current_num}=" ~/.zshrc)
+
+    # Allow user to specify the alias number
+    if [ -n "$2" ] ; then
+        current_num=$2
+    fi
+
+    # Check if its a relative path and append current dir.
+    if [ '/' != ${path_to_set[1,1]} ] ; then
+        path_to_set=$(pwd)"/"${1}
+    fi
+
+    # Check if current_num is in zsh
+    # Add it or append it
+    if [ -n "$zsh_has_alias" ] ; then
+        pattern=$(echo $path_to_set | sed -e 's/[\/&]/\\&/g')
+        sed -i "s/alias ${current_num}=\(.*\)/alias ${current_num}='cd $pattern'/g" ~/.zshrc
+    else
+       echo '' >> ~/.zshrc
+       echo "# Alias for frequently used dir '${current_num}':" >> ~/.zshrc
+       echo "alias ${current_num}='cd $path_to_set'" >> ~/.zshrc
+    fi
+
+    echo "Setting alias ${current_num} to 'cd ${path_to_set}'"
+    alias ${current_num}="cd ${path_to_set}"
+}
