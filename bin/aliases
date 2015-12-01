@@ -1,0 +1,76 @@
+##################################
+##### Various Aliases
+################################
+
+######################
+## Quick Edit Configs
+####################
+
+# zsh edit and source
+alias zedit='vim ~/.zshrc'
+alias zsource='source ~/.zshrc'
+
+# functions edit and source
+alias fedit='vim ~/bin/functions'
+alias fsource='source ~/bin/functions'
+
+# aliases edit and source
+alias aedit='vim ~/bin/aliases'
+alias asource='source ~/bin/aliases'
+
+# tmux.conf edit
+alias tedit='vim ~/.tmux.conf'
+
+# vimrc edit
+alias vedit='vim ~/.vimrc'
+
+# Bash...
+alias bedit='vim ~/.bshrc'
+alias bsource='source ~/.bshrc'
+
+###################
+## Gits
+##################
+alias gst='git status'
+alias gd='git diff'
+
+# Git root dir
+alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
+
+alias gp='git pull'
+alias glg='git log --stat --color'
+alias glgg='git log --graph --color'
+alias glgga='git log --graph --decorate --all'
+alias glgm='git log --graph --max-count=10'
+alias glgp='git log --stat --color -p'
+alias glo='git log --oneline --decorate --color'
+
+####################
+## Editor Shortcuts
+###################
+alias intellij='/apollo/env/IntelliJ-14/bin/launch-idea'
+alias eclipse='/home/schoeff/eclipse/4.4-luna-SR2/eclipse'
+alias ipython='/apollo/bin/env -e EBSPython ipython'
+alias v=vim
+
+####################
+## Dirs and Listing
+###################
+alias ws='cd /workplace/schoeff/'
+alias ..='cd ../'
+alias ...='cd ../..'
+alias bin='cd ~/bin/'
+
+# LS stuffs
+alias sl=ls
+# ll is overwritten later in zshrc by K.
+alias ll='ls -alh'
+alias lr='ls -alrth'
+
+####################
+## Misc.
+###################
+alias fxgc=/home/schoeff/scripts/fxgc
+
+# Tmux Stuffs
+alias tls='tmux ls'

@@ -75,10 +75,12 @@ function a(){
 }
 
 #####
-# A function designed to create/update alias "#" in .zshrc.
+# A function designed to create/update aliases in ~/bin/aliases.tmp file.
 #
-# This will either append or create the alias in zsh. so that user
-# can type 1 (or any #) to go to a frequently used dir.
+# This will either create or update the alias if it exists in aliases.tmp
+# A user can type 1 (or any char) to go to a frequently used dir.
+# 
+# If ~/bin/aliases.tmp doesn't exist, it will create and add source to zshrc. This will be the last aliases to load, overwriting ~/bin/aliases.
 #####
 function cd_alias() {
     if [ -z "$1" ]; then
@@ -103,9 +105,9 @@ function cd_alias() {
         return 1
     fi
 
+    ALIAS_FILE=~/bin/aliases.tmp
     path_to_set=$1
     current_num=1
-    zsh_has_alias=$(grep "alias ${current_num}=" ~/.zshrc)
 
     # Allow user to specify the alias number
     if [ -n "$2" ] ; then
@@ -117,17 +119,46 @@ function cd_alias() {
         path_to_set=$(pwd)"/"${1}
     fi
 
-    # Check if current_num is in zsh
+    # Check if ALIAS_FILE exists
+    if [ ! -f ${ALIAS_FILE} ] ; then
+        echo "##########################" > ${ALIAS_FILE}
+        echo "## Changeable aliases" >> ${ALIAS_FILE}
+        echo "##########################" >> ${ALIAS_FILE}
+        echo "" >> ${ALIAS_FILE}
+
+        # Make sure they're sourced in zshrc
+        echo "" >> ~/.zshrc
+        echo "# Source Temp aliases" >> ~/.zshrc
+        echo "source ${ALIAS_FILE}" >> ~/.zshrc
+    fi
+
+    # Check if current_num is in aliases file
     # Add it or append it
-    if [ -n "$zsh_has_alias" ] ; then
+    has_alias=$(grep "alias ${current_num}=" ${ALIAS_FILE})
+    if [ -n "$has_alias" ] ; then
         pattern=$(echo $path_to_set | sed -e 's/[\/&]/\\&/g')
-        sed -i "s/alias ${current_num}=\(.*\)/alias ${current_num}='cd $pattern'/g" ~/.zshrc
+        sed -i "s/alias ${current_num}=\(.*\)/alias ${current_num}='cd $pattern'/g" ${ALIAS_FILE}
     else
-       echo '' >> ~/.zshrc
-       echo "# Alias for frequently used dir '${current_num}':" >> ~/.zshrc
-       echo "alias ${current_num}='cd $path_to_set'" >> ~/.zshrc
+        echo "" >> ${ALIAS_FILE}
+        echo "# Alias for frequently used dir '${current_num}':" >> ${ALIAS_FILE}
+        echo "alias ${current_num}='cd $path_to_set'" >> ${ALIAS_FILE}
     fi
 
     echo "Setting alias ${current_num} to 'cd ${path_to_set}'"
-    alias ${current_num}="cd ${path_to_set}"
+    alias ${curret_num}="cd ${path_to_set}"
 }
+
+function what() {
+     if [ -z "$1" ]; then
+        echo "Usage: $0 string_to_test"
+        echo "Will perform some info checks on a given string."
+        echo "Currently will perform type, which, and grep for 10 occurrences in history."
+        return 1
+    fi
+
+    type $1
+    which $1
+    echo "Recent use in history:"
+    history | sed -r 's/^[0-9]*//g'  | grep $1 | tail -10
+}
+
