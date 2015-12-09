@@ -148,6 +148,9 @@ function cd_alias() {
     alias ${curret_num}="cd ${path_to_set}"
 }
 
+#####
+# A function that will perform type, which and grep for first occurrences in history.
+#####
 function what() {
      if [ -z "$1" ]; then
         echo "Usage: $0 string_to_test"
@@ -160,5 +163,55 @@ function what() {
     which $1
     echo "Recent use in history:"
     history | sed -r 's/^[0-9]*//g'  | grep $1 | tail -10
+}
+
+#####
+# A git function that facilitates `git stash`.
+#
+# Allows for easier stashing, applying and viewing stashed work.
+#####
+stash () {
+        usage=
+        list=
+        show=
+        while getopts sShHlL opt
+        do
+                case $opt in
+                        (h|H) usage=1  ;;
+                        (l|L) list=1  ;;
+                        (s|S) show=1  ;;
+                esac
+        done
+        shift $((OPTIND - 1))
+        if [ -n "$list" ]
+        then
+                git stash list | sed 's/stash@{\([0-9]\)}/\1/g'
+        elif [[ $# -eq 1 ]]
+        then
+                if [[ -n "$show" ]]
+                then
+                        git show stash@{$1}
+                else
+                        git stash apply stash@{$1}
+                fi
+                if [[ $? -eq 1 ]]
+                then
+                        usage=1
+                fi
+        else
+                git stash
+        fi
+        if [ -n "$usage" ]
+        then
+                echo "Usage: $0 [-h HELP] [-l LIST] [-s SHOW] STASH#"
+                echo "-l    perform git stash list"
+                echo "-s    perform git show stash@{STASH#}"
+                echo "-h    display this help"
+                echo "e.x. $0 -l =  git stash list"
+                echo "e.x. $0 1 = git stash apply stash@{1}"
+                echo "e.x. $0 -s 1 = git show stash@{1}"
+                echo "e.x. $0 = git stash"
+                return 1
+        fi
 }
 
