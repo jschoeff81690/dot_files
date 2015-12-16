@@ -284,3 +284,16 @@ function blame() {
         echo $cmd
     fi
 }
+
+view_colors () {
+  	if [[ -z "$1" ]]
+  	then
+  	    for i in {0..255}
+  		  do
+  			    printf "\x1b[38;5;${i}mcolour${i}\n"
+  		  done
+  	else
+  		  printf "\x1b[38;5;${1}mcolour${1}\n"
+  	fi
+}
+}
