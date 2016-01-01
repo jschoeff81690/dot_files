@@ -56,9 +56,9 @@ alias v=vim
 ####################
 ## Dirs and Listing
 ###################
-alias ws='cd /workplace/schoeff/'
 alias ..='cd ../'
 alias ...='cd ../..'
+alias ....='cd ../../..'
 alias bin='cd ~/bin/'
 
 # LS stuffs

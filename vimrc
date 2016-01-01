@@ -34,7 +34,7 @@ execute pathogen#infect()
 
 " Theme
 set background=dark
-colorscheme solarized
+colorscheme PaperColor
 
 
 " with a map leader it's possible to do extra key combinations
