@@ -296,4 +296,3 @@ view_colors () {
   		  printf "\x1b[38;5;${1}mcolour${1}\n"
   	fi
 }
-}

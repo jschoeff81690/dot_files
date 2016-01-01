@@ -33,7 +33,7 @@ syntax on
 execute pathogen#infect()
 
 " Theme
-set background=dark
+set background=light
 colorscheme PaperColor
 
 
