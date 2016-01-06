@@ -172,47 +172,51 @@ function what() {
 #####
 function stash () {
     usage=
-    list=
-    show=
-    while getopts sShHlL opt
-    do
+    command="stash"
+    while getopts dDsShHlL opt; do
         case $opt in
-            (h|H) usage=1  ;;
-            (l|L) list=1  ;;
-            (s|S) show=1  ;;
+            h|H) command="help";;
+            l|L) command="list";;
+            s|S) command="show";;
+            d|D) command="drop";;
         esac
     done
-    
+
     shift $((OPTIND - 1))
-    if [ -n "$list" ]
-    then
-        git stash list | sed 's/stash@{\([0-9]\)}/\1/g'
-    elif [[ $# -eq 1 ]]
-    then
-        if [[ -n "$show" ]]
-        then
-            git show stash@{$1}
-        else
-            git stash apply stash@{$1}
-        fi
-        
-        if [[ $? -eq 1 ]]
-        then
-            usage=1
-        fi
-    else
-        git stash
-    fi
-    
-    if [ -n "$usage" ]
-    then
-        echo "Usage: $0 [-h HELP] [-l LIST] [-s SHOW] STASH#"
-        echo "-l    perform git stash list"
-        echo "-s    perform git show stash@{STASH#}"
+
+    case $command in
+        list)   git stash list | sed 's/stash@{\([0-9]\)}/\1/g'
+                return 0
+                ;;
+        stash)  git stash
+                return 0
+                ;;
+        show)   if [[ $# -eq 1 ]]; then
+                    git show stash@{$1}
+                else
+                    usage=1
+                fi
+                ;;
+        drop)   if [[ $# -eq 1 ]]; then
+                    git stash drop stash@{$1}
+                else
+                    usage=1
+                fi
+                ;;
+        help|*)
+                usage=1;;
+    esac
+
+    if [ -n "$usage" ]; then
+        echo "Usage: $0 [-h HELP] [-d DROP] [-l LIST] [-s SHOW] STASH#"
+        echo "-l    list stashes - performs `git stash list`"
+        echo "-s    show stash - performs `git show stash@{STASH#}`"
+        echo "-d    drop stash - perform `git drop stash@{STASH#}`"
         echo "-h    display this help"
         echo "e.x. $0 -l =  git stash list"
         echo "e.x. $0 1 = git stash apply stash@{1}"
         echo "e.x. $0 -s 1 = git show stash@{1}"
+        echo "e.x. $0 -d 1 = git drop stash@{1}"
         echo "e.x. $0 = git stash"
         return 1
     fi
