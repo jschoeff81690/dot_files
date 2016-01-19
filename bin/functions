@@ -170,56 +170,92 @@ function what() {
 #
 # Allows for easier stashing, applying and viewing stashed work.
 #####
-function stash () {
-    usage=
-    command="stash"
-    while getopts dDsShHlL opt; do
-        case $opt in
-            h|H) command="help";;
-            l|L) command="list";;
-            s|S) command="show";;
-            d|D) command="drop";;
+stash () {
+        usage=
+        dry_run=
+        command='stash'
+        while getopts cCnNdDaAsShHlL opt
+        do
+                case $opt in
+                        (h|H) command='usage'  ;;
+                        (n|N) dry_run=1  ;;
+                        (l|L) command='list'  ;;
+                        (s|S) command='show'  ;;
+                        (a|A) command='apply'  ;;
+                        (d|D) command='drop'  ;;
+                        (c|C) command='clear'  ;;
+                esac
+        done
+        shift $((OPTIND - 1))
+        git_cmd=
+        case "$command" in
+                (list) git_cmd="stash list | sed 's/stash@{\([0-9]\)}/\1/g'"  ;;
+                (show) if [[ $1 =~ "^[0-9]+$" ]]
+                        then
+                                stash="stash@{$1}"
+                        else
+                                stash="stash^{/$1}"
+                        fi
+                        git_cmd="show $stash -p"  ;;
+                (apply) if [[ $1 =~ "^[0-9]+$" ]]
+                        then
+                                stash="stash@{$1}"
+                        else
+                                stash="stash^{/$1}"
+                        fi
+                        git_cmd="stash apply $stash"  ;;
+                (stash) extra=
+                        if [[ $# -gt 0 ]]
+                        then
+                                extra="save '$*'"
+                                echo $*
+                        fi
+                        git_cmd="stash $extra"  ;;
+                (clear) git_cmd="stash clear"  ;;
+                (drop) if [[ $1 =~ "^[0-9]+$" ]]
+                        then
+                                stash="stash@{$1}"
+                        else
+                                stash="stash^{/$1}"
+                        fi
+                        git_cmd="stash drop $stash"  ;;
+                (usage) usage=1  ;;
         esac
-    done
+        
+        cmd="git $git_cmd"
 
-    shift $((OPTIND - 1))
+        if [[ -n "$dry_run" ]]
+        then
+                echo $cmd
+        elif [[ -z "$usage" ]]
+        then
+                eval $cmd
+        fi
 
-    case $command in
-        list)   git stash list | sed 's/stash@{\([0-9]\)}/\1/g'
-                return 0
-                ;;
-        stash)  git stash
-                return 0
-                ;;
-        show)   if [[ $# -eq 1 ]]; then
-                    git show stash@{$1}
-                else
-                    usage=1
-                fi
-                ;;
-        drop)   if [[ $# -eq 1 ]]; then
-                    git stash drop stash@{$1}
-                else
-                    usage=1
-                fi
-                ;;
-        help|*)
-                usage=1;;
-    esac
+        if [[ $? -eq 1 ]]
+        then
+                usage=1
+        fi
 
-    if [ -n "$usage" ]; then
-        echo "Usage: $0 [-h HELP] [-d DROP] [-l LIST] [-s SHOW] STASH#"
-        echo "-l    list stashes - performs `git stash list`"
-        echo "-s    show stash - performs `git show stash@{STASH#}`"
-        echo "-d    drop stash - perform `git drop stash@{STASH#}`"
-        echo "-h    display this help"
-        echo "e.x. $0 -l =  git stash list"
-        echo "e.x. $0 1 = git stash apply stash@{1}"
-        echo "e.x. $0 -s 1 = git show stash@{1}"
-        echo "e.x. $0 -d 1 = git drop stash@{1}"
-        echo "e.x. $0 = git stash"
-        return 1
-    fi
+        if [ -n "$usage" ]; then
+                echo "Usage: $0 [-hn] [-c CLEAR] [-d DROP] [-l LIST] [-s SHOW] [-a APPLY] STASH#"
+                echo "-l    list stashes - performs `git stash list`"
+                echo "-a    apply stash - performs `git stash apply stash@{STASH#}` OR `git stash apply stash^{/STASH}`"
+                echo "-s    show stash - performs `git show stash@{STASH#}` OR `git stash apply stash^{/STASH}`"
+                echo "-d    drop stash - perform `git stash drop stash@{STASH#}`"
+                echo "-c    cleart stashes - perform `git stash clear`"
+                echo "-n    dry run - display git command, do not run."
+                echo "-h    display this help"
+                echo "e.x. $0 -l =  git stash list"
+                echo "e.x. $0 -a 1 = git stash apply stash@{1}"
+                echo "e.x. $0 -s 1 = git show stash@{1}"
+                echo "e.x. $0 -d 1 = git drop stash@{1}"
+                echo "e.x. $0 = git stash"
+                echo "e.x. $0 my first stash = git stash save 'my first stash'"
+                echo "e.x. $0 \"my first stash\" = git stash save 'my first stash'"
+                echo "e.x. $0 -d \"my first stash\" outputs \"git stash save 'my first stash'\""
+                return 1
+        fi
 }
 
 #####
