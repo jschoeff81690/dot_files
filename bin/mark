@@ -1,0 +1,89 @@
+#!/bin/zsh
+
+#####
+# A function designed to create/update aliases in ~/bin/aliases.tmp file.
+#
+# This will either create or update the alias if it exists in aliases.tmp
+# A user can type 1 (or any char) to go to a frequently used dir.
+#
+# If ~/bin/aliases.tmp doesn't exist, it will create and add source to zshrc. This will be the last aliases to load, overwriting ~/bin/aliases.
+#####
+
+ALIAS_FILE=/home/$USER/bin/aliases.tmp
+PATH_TO_SET=
+USER_ALIAS=
+
+function usage() {
+    echo "Usage: ${0##*/} [PATH_TO_SET] ALIAS"
+    echo
+    echo "Create and update aliases for commonly used directories."
+    echo
+    echo 'Ex:'
+    echo "$ $0 workspace"
+    echo '> workspace is an alias for cd '$(pwd)
+    echo
+    echo "$ $0 /home/$USER/work workspace"
+    echo "> workspace is an alias for cd /home/$USER/work"
+    exit "${1-0}"
+}
+
+##
+# Raise
+#
+# Print an error message to STDERR, then print this script's usage with exit code of 1.
+function raise() {
+# Print in red to make it a little more noticeable.
+    echo -e "\033[0;31mError: ${1}\033[0m\n" >&2
+    echo
+    usage 1
+}
+
+function main() {
+    if [ -z "$1" ] ; then
+        raise "Missing alias." 
+    fi
+
+    if [ -z "$2" ] ; then
+        USER_ALIAS=$1
+    else
+        PATH_TO_SET=$1
+        USER_ALIAS=$2
+    fi
+
+    # Check if its a relative path and append current dir.
+    if [ -z "$PATH_TO_SET" ]; then
+        PATH_TO_SET=$(pwd)
+    elif [ '/' != ${PATH_TO_SET[1,1]} ] ; then
+        PATH_TO_SET=$(pwd)"/"$PATH_TO_SET
+    fi
+
+    # Check if ALIAS_FILE exists
+    if [ ! -f ${ALIAS_FILE} ] ; then
+        echo "##########################" > ${ALIAS_FILE}
+        echo "## Modifiable aliases" >> ${ALIAS_FILE}
+        echo "##########################" >> ${ALIAS_FILE}
+        echo "" >> ${ALIAS_FILE}
+
+        # Make sure they're sourced in zshrc
+        echo "" >> ~/.zshrc
+        echo "# Source Temp aliases" >> ~/.zshrc
+        echo "source ${ALIAS_FILE}" >> ~/.zshrc
+    fi
+
+    # Check if USER_ALIAS is in aliases file
+    # Add it or append it
+    has_alias=$(grep "alias ${USER_ALIAS}=" ${ALIAS_FILE})
+    if [ -n "$has_alias" ] ; then
+        pattern=$(echo $PATH_TO_SET | sed -e 's/[\/&]/\\&/g')
+        sed -i "s/alias ${USER_ALIAS}=\(.*\)/alias ${USER_ALIAS}='cd $pattern'/g" ${ALIAS_FILE}
+    else
+        echo "" >> ${ALIAS_FILE}
+        echo "# Alias for frequently used dir '${USER_ALIAS}':" >> ${ALIAS_FILE}
+        echo "alias ${USER_ALIAS}='cd $PATH_TO_SET'" >> ${ALIAS_FILE}
+    fi
+
+    echo "Setting alias ${USER_ALIAS} to 'cd ${PATH_TO_SET}'"
+    alias ${USER_ALIAS}="cd ${PATH_TO_SET}"
+}
+
+main $@

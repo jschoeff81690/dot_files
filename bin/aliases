@@ -33,16 +33,24 @@ alias bsource='source ~/.bshrc'
 ##################
 alias gst='git status'
 alias gd='git diff'
+alias gds='git diff --staged'
+alias gl='git log'
+alias gco='git checkout'
+alias gcp='git cherry-pick'
+alias gr='git rebase'
+alias gri='git rebase -i'
+alias gp='git pull --rebase'
+alias gs='git show'
 
 # Git root dir
-alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
+alias grd='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
 
-alias gp='git pull'
-alias glg='git log --stat --color'
+alias gls='git log --stat --color --max-count=1'
 alias glgg='git log --graph --color'
 alias glgga='git log --graph --decorate --all'
-alias glgm='git log --graph --max-count=10'
+alias glgm='git log --graph --max-count=5'
 alias glgp='git log --stat --color -p'
+alias gll='git log --oneline --decorate --color --max-count=10'
 alias glo='git log --oneline --decorate --color'
 
 ####################
@@ -74,3 +82,10 @@ alias fxgc=/home/schoeff/scripts/fxgc
 
 # Tmux Stuffs
 alias tls='tmux ls'
+
+
+###################
+## Log diving
+##################
+alias find_exceptions='egrep -o "[0-9A-Za-z.]+Exception[:]?[0-9A-Za-z \-\(\)]+"'
+alias suc='sort | uniq -c'
