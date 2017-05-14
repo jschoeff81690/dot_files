@@ -1,0 +1,150 @@
+#!/bin/bash
+
+SEARCH_DIR="."
+FILENAME=
+MATCH_EXACT=
+MATCH_BASE=
+MATCH_SINGLE=
+JOB_COUNT=
+HELP=
+
+function usage() {
+    SCRIPT=${0##*/}
+    echo "Usage: $SCRIPT [OPTIONS] FILENAME"
+    echo
+    echo "Find files in given directory."
+    echo "  -b          - match base filename. Any files in sub dirs with FILENAME as base name."
+    echo "  -e          - match exact filename. Find file with exact match in dir."
+    echo "  -p DIR      - directory to search in. Can be relative or absolute."
+    echo "  -s          - Search for single entry only. Will exit with code 2 if more than one file matched."
+    echo "  -t COUNT    - Search faster using COUNT number of background jobs in parallel."
+    echo "  -h          - This help"
+    echo
+    echo "This will find matching files that have FILENAME in their name. Case senstive."
+    echo
+    echo "Exits with value 1 if:"
+    echo "- No files found"
+    echo "- Error in arguments"
+    echo
+    echo "Exits with value 2 if:"
+    echo "- Single entry flagged, but matched multiple."
+    echo
+    echo "Examples:"
+    echo "> $SCRIPT file1"
+    echo "file1"
+    echo "file12"
+    echo "subdir/file12"
+    echo "subdir/file1"
+    echo
+    echo "> $SCRIPT dir/file1"
+    echo "subdir/file1"
+    echo "subdir/file12"
+    echo
+    echo "> $SCRIPT -p subdir file1"
+    echo "subdir/file1"
+    echo "subdir/file12"
+    echo
+    echo "> $SCRIPT -e file1"
+    echo "file1"
+    echo
+    echo "> $SCRIPT -p subdir -e file1"
+    echo "subdir/file1"
+    echo
+    echo "> $SCRIPT -b file1"
+    echo "file1"
+    echo "subdir/file1"
+    echo
+    exit 0
+}
+
+##
+# Raise
+#
+# Print an error message to STDERR, then print this script's usage with exit code of 1.
+function raise() {
+# Print in red to make it a little more noticeable.
+    echo -e "\033[0;31mError: ${1}\033[0m\n" >&2
+    exit ${2-1}
+}
+
+##
+# check_args
+#
+# Validate args after parsing input.
+function check_args() {
+    if [ -n "$HELP" ]; then
+        usage
+    fi
+
+    if [[ -n "$MATCH_BASE" && -n "$MATCH_EXACT" ]]; then
+        raise "Cannot match base and exact."
+    fi
+
+    if [[ -z "$FILENAME" ]]; then
+        raise "Missing FILENAME to search for."
+    fi
+}
+
+##
+# find_file
+#
+# Find the actual file(s)
+function find_file() {
+    local files=
+
+    local exact_file=
+    if [[ "${FILENAME:0:1}" == '/'  ]];then
+        exact_file=${FILENAME}
+    else
+        exact_file=${SEARCH_DIR}/${FILENAME}
+    fi
+
+    if [[ -n "$MATCH_EXACT" ]]; then
+        if [[ -f $exact_file ]]; then
+            files=$exact_file
+        fi
+    else
+        if [[ -f $exact_file ]]; then
+            files=$exact_file
+        else
+            files=$(find $SEARCH_DIR -type f -wholename "*$FILENAME*")
+        fi
+    fi
+
+    if [[ -n "$MATCH_BASE" ]]; then
+        files=$(echo "$files" | sed -r "/\/$FILENAME\$/!d")
+    fi
+
+    if [[ -z "$files" ]]; then
+        raise "No file(s) found."
+    else
+        if [[ $(wc -l <<< "$files") -ge 2 ]] && [[ -n "$MATCH_SINGLE" ]]; then
+            raise "More than one file found." 2
+        fi
+        echo "$files" | sed 's/\.\///g'
+    fi
+}
+
+function main() {
+    while getopts behp:st: opt; do
+        case $opt in
+            b) MATCH_BASE=1;;
+            h) HELP=1;;
+            e) MATCH_EXACT=1;;
+            p) SEARCH_DIR=${OPTARG%/};;
+            s) MATCH_SINGLE=1;;
+            t) JOB_COUNT=${OPTARG};;
+            *) HELP=1;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    FILENAME=$1
+
+    check_args
+
+    find_file
+}
+
+main $@

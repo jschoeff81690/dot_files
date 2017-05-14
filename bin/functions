@@ -1,5 +1,16 @@
 #!/bin/zsh
 
+# User bin dir
+BIN_DIR=~/bin
+
+function start_agent() {
+    /usr/bin/ssh-agent | sed 's/^echo/#echo/' > "${SSH_ENV}"
+    echo "${SSH_ENV}"
+    chmod 600 "${SSH_ENV}"
+    . "${SSH_ENV}" > /dev/null
+    /usr/bin/ssh-add ~/.ssh/appliance-test
+}
+
 # greps for path, filename and line number
 function file-only () {
   if [ -n "$1" ]; then
@@ -24,21 +35,6 @@ function jks-to-pem(){
     rm -f $p12_temp_file
 }
 
-function up() {
-    if [ -z "$1" ] ; then
-        echo "Usage: $0 <NumberOfDirectoriesUp>"
-        return 1
-    fi
-    dir="../"
-    if [ "$1" -gt 1 ] ; then
-        for i in ${1} ; do
-            dir=$dir"../"
-        done
-    fi
-    echo $dir
-    cd $dir
-}
-
 # Colorful man pages
 function man() {
     env LESS_TERMCAP_mb=$'\E[01;31m' \
@@ -53,12 +49,20 @@ function man() {
 
 function math() {
     if [ -z "$1" ] ; then
-        echo "Usage: $0 \"1+2\""
-        echo "Usage: $0 \"1/2\""
-        echo "Usage: $0 \"1*2\""
-        echo "Usage: $0 \"1-2\""
+        echo "Usage: $0 OPERATION"
+        echo "NOTE: For multiplication '*', the shell will try to substitute."
+        echo "\tTo get arround this, either surround text with quotes or use 'x' instead of '*'"
+        echo "example: $0 1/2"
+        echo "example: $0 1 + 2"
+        echo "example: $0 1 x 2"
+        echo "example: $0 \"1 * 2\""
     fi
-    awk 'BEGIN{print '"$1"'}'
+    awk 'BEGIN{print '"$(echo $@ | tr 'x' '*' | tr '\r\n' ' ')"'}'
+}
+
+function generate_java_classpath() {
+   file=$(findup packageInfo)"/.syntastic_java_classpath~"
+   echo "let g:syntastic_java_javac_classpath = '"$(brazil-path run.classpath)"'" > $file
 }
 
 function a(){
@@ -74,11 +78,20 @@ function a(){
     fi
 }
 
-#####
-# A function that will perform type, which and grep for first occurrences in history.
-#####
+function format() {
+    if [ -z "$1" ]; then
+        echo "Usage: $0 files_to_format..."
+        return 1
+    fi
+
+    for file in $@; do
+        echo "Formatting: $file"
+        /home/schoeff/eclipse/4.4-luna-SR2/eclipse -vm /apollo/env/JavaSE8/jdk1.8/bin/java -application org.eclipse.jdt.core.JavaCodeFormatter -verbose -config /home/schoeff/bin/formatter/formatter.xml/org.eclipse.jdt.core.prefs $file
+    done
+}
+
 function what() {
-     if [ -z "$1" ]; then
+    if [ -z "$1" ]; then
         echo "Usage: $0 string_to_test"
         echo "Will perform some info checks on a given string."
         echo "Currently will perform type, which, and grep for 10 occurrences in history."
@@ -91,140 +104,55 @@ function what() {
     history | sed -r 's/^[0-9]*//g'  | grep $1 | tail -10
 }
 
-#####
-# A git function that facilitates `git stash`.
-#
-# Allows for easier stashing, applying and viewing stashed work.
-#####
-stash () {
-        usage=
-        dry_run=
-        command='stash'
-        while getopts cCnNdDaAsShHlL opt
-        do
-                case $opt in
-                        (h|H) command='usage'  ;;
-                        (n|N) dry_run=1  ;;
-                        (l|L) command='list'  ;;
-                        (s|S) command='show'  ;;
-                        (a|A) command='apply'  ;;
-                        (d|D) command='drop'  ;;
-                        (c|C) command='clear'  ;;
-                esac
-        done
-        shift $((OPTIND - 1))
-        git_cmd=
-        case "$command" in
-                (list) git_cmd="stash list | sed 's/stash@{\([0-9]\)}/\1/g'"  ;;
-                (show) if [[ $1 =~ "^[0-9]+$" ]]
-                        then
-                                stash="stash@{$1}"
-                        else
-                                stash="stash^{/$1}"
-                        fi
-                        git_cmd="show $stash -p"  ;;
-                (apply) if [[ $1 =~ "^[0-9]+$" ]]
-                        then
-                                stash="stash@{$1}"
-                        else
-                                stash="stash^{/$1}"
-                        fi
-                        git_cmd="stash apply $stash"  ;;
-                (stash) extra=
-                        if [[ $# -gt 0 ]]
-                        then
-                                extra="save '$*'"
-                                echo $*
-                        fi
-                        git_cmd="stash $extra"  ;;
-                (clear) git_cmd="stash clear"  ;;
-                (drop) if [[ $1 =~ "^[0-9]+$" ]]
-                        then
-                                stash="stash@{$1}"
-                        else
-                                stash="stash^{/$1}"
-                        fi
-                        git_cmd="stash drop $stash"  ;;
-                (usage) usage=1  ;;
-        esac
-        
-        cmd="git $git_cmd"
-
-        if [[ -n "$dry_run" ]]
-        then
-                echo $cmd
-        elif [[ -z "$usage" ]]
-        then
-                eval $cmd
-        fi
-
-        if [[ $? -eq 1 ]]
-        then
-                usage=1
-        fi
-
-        if [ -n "$usage" ]; then
-                echo "Usage: $0 [-hn] [-c CLEAR] [-d DROP] [-l LIST] [-s SHOW] [-a APPLY] STASH#"
-                echo "-l    list stashes - performs `git stash list`"
-                echo "-a    apply stash - performs `git stash apply stash@{STASH#}` OR `git stash apply stash^{/STASH}`"
-                echo "-s    show stash - performs `git show stash@{STASH#}` OR `git stash apply stash^{/STASH}`"
-                echo "-d    drop stash - perform `git stash drop stash@{STASH#}`"
-                echo "-c    cleart stashes - perform `git stash clear`"
-                echo "-n    dry run - display git command, do not run."
-                echo "-h    display this help"
-                echo "e.x. $0 -l =  git stash list"
-                echo "e.x. $0 -a 1 = git stash apply stash@{1}"
-                echo "e.x. $0 -s 1 = git show stash@{1}"
-                echo "e.x. $0 -d 1 = git drop stash@{1}"
-                echo "e.x. $0 = git stash"
-                echo "e.x. $0 my first stash = git stash save 'my first stash'"
-                echo "e.x. $0 \"my first stash\" = git stash save 'my first stash'"
-                echo "e.x. $0 -d \"my first stash\" outputs \"git stash save 'my first stash'\""
-                return 1
-        fi
-}
-
-#####
-# A git function that facilitates `git blame`.
-#
-# Allows for easier blaming :/.
-#####
 function blame() {
     if [ "$#" -lt 1 ]; then
-        echo "Usage: $0 [-c commit] [-l line_option] filer_/path"
-        echo "Usage: $0 [-c commit] [-l line_option] filer_/path"
+        echo "Usage: $0 [-c commit] [-l line_option] file_path"
         echo "-c    commit for git blame to starting looking back from"
         echo "-l    lines to search file for, without this param it does whole file."
         echo "      -l line_numer results in searching a single line"
         echo "      -l start-end results in searching from a start line to end line"
-        return 1
-    fi
-  
-    commit=
-    lines=
-    verbose=
-    while getopts vVc:C:l:L: opt; do
-        case $opt in
-            c|C) commit=$OPTARG;;
-            l|L) lines=$OPTARG;;
-            v|V) verbose=1;;
-        esac
-    done
-  
-    shift $((OPTIND - 1))
-    
-    file_path=$1
-    if [ ! -f $file_path ] ; then
-        echo "Usage: $0 [-c commit] [-l line_option] filer_/path"
-        echo "-c    commit for git blame to starting looking back from"
-        echo "-l    lines to search file for, without this param it does whole file."
-        echo "      -l line_numer results in searching a single line"
-        echo "      -l start-end results in searching from a start line to end line"
-        echo "-v    verbose: print git command instead of doing."
+        echo "-n    dry-run: print git command instead of doing."
         echo "-h    print this help"
         return 1
     fi
-  
+
+    local commit=
+    local lines=
+    local dry_run=
+    local help=
+    while getopts hnNc:C:l:L: opt; do
+        case $opt in
+            c|C) commit=$OPTARG;;
+            l|L) lines=$OPTARG;;
+            n|N) dry_run=1;;
+            h|H) help=1;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    if [[ -n "$help" ]]; then
+        echo "Usage: $0 [-c commit] [-l line_option] file_path"
+        echo "-c    commit for git blame to starting looking back from"
+        echo "-l    lines to search file for, without this param it does whole file."
+        echo "      -l line_numer results in searching a single line"
+        echo "      -l start-end results in searching from a start line to end line"
+        echo "-n    dry-run: print git command instead of doing."
+        echo "-h    print this help"
+        return 0
+    fi
+
+
+    local file_path=$($BIN_DIR/find-file -s $1)
+    local exit_code=$?
+    if [[ exit_code -ne 0 ]]; then
+        echo "$file_path"
+        return 1
+    elif [ ! -f $file_path ] ; then
+        echo "File not found."
+        return 1
+    fi
+
     is_range=$(echo $lines | grep -)
     if [ -n "$is_range" ] ; then
         start=$(echo $lines | cut -d'-' -f1)
@@ -237,28 +165,295 @@ function blame() {
             lines="-L${lines},+1"
         fi
     fi
-  
+
+    # -w ignore whitespace changes, -M detect moved or copies files
     if [[ -z "$commit" ]] ;  then
-        cmd="git blame ${lines} $file_path"
+        cmd="git blame -w -M ${lines} $file_path"
     else
-        cmd="git blame ${lines} ${commit}^ -- $file_path"
+        cmd="git blame -w -M ${lines} ${commit}^ -- $file_path"
     fi
-  
-    if [[ -z "$verbose" ]] ; then
+
+    if [[ -z "$dry_run" ]] ; then
         eval $cmd
     else
         echo $cmd
     fi
 }
 
-view_colors () {
-  	if [[ -z "$1" ]]
-  	then
-  	    for i in {0..255}
-  		  do
-  			    printf "\x1b[38;5;${i}mcolour${i}\n"
-  		  done
-  	else
-  		  printf "\x1b[38;5;${1}mcolour${1}\n"
-  	fi
+## More better git stashing
+function stash() {
+    usage=
+    dry_run=
+    command='stash'
+    while getopts cCnNdDaAsShHlL opt; do
+        case $opt in
+            h|H) command='usage';;
+            n|N) dry_run=1;;
+            l|L) command='list';;
+            s|S) command='show';;
+            a|A) command='apply';;
+            d|D) command='drop';;
+            c|C) command='clear';;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    git_cmd=
+
+    case "$command" in
+        list)
+            git_cmd="stash list | sed 's/stash@{\([0-9]\)}/\1/g'"
+            ;;
+        show)
+            if [[ $1 =~ "^[0-9]+$" ]]; then
+                stash="stash@{$1}"
+            else
+                stash="stash^{/$1}"
+            fi
+            git_cmd="show $stash -p"
+            ;;
+        apply)
+            if [[ $1 =~ "^[0-9]+$" ]]; then
+                stash="stash@{$1}"
+            else
+                stash="stash^{/$1}"
+            fi
+            git_cmd="stash apply $stash"
+            ;;
+        stash)
+            extra=
+            if [[ $# -gt 0 ]]; then
+                extra="save '$*'"
+                echo $*
+            fi
+            git_cmd="stash $extra"
+            ;;
+        clear)
+            git_cmd="stash clear"
+            ;;
+        drop)
+            if [[ $1 =~ "^[0-9]+$" ]]; then
+                stash="stash@{$1}"
+            else
+                stash="stash^{/$1}"
+            fi
+            git_cmd="stash drop $stash"
+            ;;
+        usage|*) usage=1;;
+    esac
+
+    cmd="git $git_cmd"
+
+    if [[ -n "$dry_run" ]]; then
+        echo $cmd;
+    elif [[ -z "$usage" ]]; then
+        eval $cmd
+    fi
+
+    if [[ $? -eq 1 ]]; then
+        usage=1
+    fi
+
+    if [ -n "$usage" ]; then
+        echo "Usage: $0 [-hn] [-c CLEAR] [-d DROP] [-l LIST] [-s SHOW] [-a APPLY] STASH#"
+        echo "-l    list stashes - performs \`git stash list\`"
+        echo "-a    apply stash - performs \`git stash apply stash@{STASH#}\` OR \`git stash apply stash^{/STASH}\`"
+        echo "-s    show stash - performs \`git show stash@{STASH#}\` OR \`git stash apply stash^{/STASH}\`"
+        echo "-d    drop stash - perform \`git stash drop stash@{STASH#}\`"
+        echo "-c    cleart stashes - perform \`git stash clear\`"
+        echo "-n    dry run - display git command, do not run."
+        echo "-h    display this help"
+        echo "e.x. $0 -l =  git stash list"
+        echo "e.x. $0 -a 1 = git stash apply stash@{1}"
+        echo "e.x. $0 -s 1 = git show stash@{1}"
+        echo "e.x. $0 -d 1 = git drop stash@{1}"
+        echo "e.x. $0 = git stash"
+        echo "e.x. $0 my first stash = git stash save 'my first stash'"
+        echo "e.x. $0 \"my first stash\" = git stash save 'my first stash'"
+        echo "e.x. $0 -d \"my first stash\" outputs \"git stash save 'my first stash'\""
+        return 1
+    fi
+}
+
+function view_colors() {
+    if [[ -z "$1" ]]; then
+        for i in {0..255} ; do
+            printf "\x1b[38;5;${i}mcolour${i}\n"
+        done
+    else
+        printf "\x1b[38;5;${1}mcolour${1}\n"
+    fi
+}
+
+function out() {
+    local help=
+    local filename="out"
+    local suffix=$(date +'%Y-%m-%d-%H%M')
+    while getopts hf:s: opt; do
+        case $opt in
+            h|H) help=1;;
+            f) filename=$OPTARG;;
+            s) suffix=$OPTARG;;
+            *) help=1;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    if [[ -n "$help" ]]; then
+        echo "Usage: $0 -f filename -s suffix"
+        echo
+        echo "OPTIONS:"
+        echo " -f : filename for output"
+        echo " -s : suffix appended to filename, default is \`date +'%Y-%m-%d-%H%M'\`"
+        echo " -h : this help."
+    fi
+
+    file_path="${filename}.${suffix}"
+
+    >&0 | tee $file_path
+}
+
+function file-size () {
+     cmd="print \"0x%x\t%d\t%g\t%g Ki  %g Mi  %g Gi  %g Ti\"%($*, $*, $*, ($*)/1024.0, ($*)/1024.0/1024, ($*)/1024.0/1024/1024, ($*)/1024.0/1024/1024/1024)"
+     python -c $cmd
+}
+
+function run-java() {
+    javac $1.java && java $@
+}
+
+function s3() {
+    aws s3 $@
+}
+
+function ssh-ec2() {
+    local dry_run=
+    local key='~/.ssh/appliance-test'
+    local user=ec2-user
+    local ip_address=
+    local usage=
+    while getopts nhi:g opt; do
+        case $opt in
+            h|H) usage=1;;
+            n|N) dry_run=1;;
+            i) key=$OPTARG;;
+            g) user=sguser;;
+            *) usage=1;;
+        esac
+    done
+
+    shift $((OPTIND - 1))
+
+    if [[ -z "$1" ]]; then
+        usage=1
+    else
+        ip_address=$1
+    fi
+
+    if [[ -z "$usage" ]]; then
+        CMD="ssh -i ${key} ${user}@${ip_address}"
+        if [[ -z "$dry_run" ]]; then
+            eval "$CMD"
+        else
+            echo $CMD
+        fi
+    else
+        echo "Usage: $0 [-i key] [-g gateway] IP"
+        echo ''
+        echo ' -i key pem file to ssh with. defualt ~/.ssh/appliance-test'
+        echo ' -g use sguser as user instead of ec2-user.'
+        echo ' -n dry run. show command, dont run.'
+        echo ''
+        echo 'ssh-ec2 -n 54.1.2.3'
+        echo '> ssh -i ~/.ssh/appliance-test ec2-user@54.1.2.3'
+        return 1
+    fi
+}
+
+function lines() {
+    local filename=
+    local lines=
+    local line_numbers=
+    local help=
+
+    while getopts l:n opt; do
+        case $opt in
+            l) lines=$OPTARG;;
+            n) line_numbers="-n";;
+            h|H) help=1;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    filename=$1
+    if [[ -z "$filename" ]]; then
+        echo "Missing filename."
+        echo
+        help=1
+    fi
+
+    if [[ ! -f "$filename" ]]; then
+        echo "File not found."
+        echo
+        help=1
+    fi
+
+    if [[ -z "$help" ]]; then
+        if [[ -n "$lines" ]]; then
+            cat $line_numbers $filename | sed -n "${lines/-/,}p"
+        else
+            cat $line_numbers $filename
+        fi
+    else
+        echo "Usage: $0 [OPTIONS] filename"
+        echo "Print lines of a file. Prints whole thing by default."
+        echo "-l m-n\tRange of lines. m and n inclusive. (m,n also accepted)"
+        echo "-n show line numbers"
+        return 1
+    fi
+}
+
+function v() {
+    local help=
+    local tabs=1
+    while getopts hb opt; do
+        case $opt in
+            h) help=1;;
+            b) tabs=0;;
+        esac
+    done
+    shift $((OPTIND - 1))
+
+    if [[ -n "$help" ]]; then
+        echo "Usage: $0 [OPTIONS] pattern..."
+        echo "Open vim with file(s) matching pattern."
+        echo
+        echo "OPTIONS:"
+        echo " -b : open files in buffers instead of tabs"
+        echo " -h : this help"
+    fi
+
+    local files_to_open=
+    local use_tabs=
+
+    if [[ $# -gt 0 ]]; then
+        for f in "$@"; do
+            local files="$($BIN_DIR/find-file $f)"
+            local ret=$?
+
+            if [[ $ret -eq 0 ]]; then
+                files_to_open="${files_to_open}${files}\n"
+            else
+                files_to_open="${files_to_open}${f}\n"
+            fi
+        done
+    fi
+
+    if [[ $tabs -eq 1 ]]; then
+        use_tabs="-p"
+    fi
+
+   vim $use_tabs $(echo $files_to_open | sort | uniq | tr '\n' ' ')
 }
