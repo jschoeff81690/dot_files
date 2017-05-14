@@ -56,9 +56,7 @@ alias glo='git log --oneline --decorate --color'
 ####################
 ## Editor Shortcuts
 ###################
-alias intellij='/apollo/env/IntelliJ-14/bin/launch-idea'
 alias eclipse='/home/schoeff/eclipse/4.4-luna-SR2/eclipse'
-alias ipython='/apollo/bin/env -e EBSPython ipython'
 
 ####################
 ## Dirs and Listing
