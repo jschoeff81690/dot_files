@@ -457,3 +457,12 @@ function v() {
 
    vim $use_tabs $(echo $files_to_open | sort | uniq | tr '\n' ' ')
 }
+
+generate_ssl_cert() {
+      if [[ -z "$1" ]]; then
+        echo "Usage: $0 cert_name"
+    fi
+    cert_name=${1}
+    echo "Generating ${cert_name}.crt and ${cert_name}.key"
+    openssl req -new -x509 -nodes -out ${cert_name}.crt -keyout ${cert_name}.key
+}
